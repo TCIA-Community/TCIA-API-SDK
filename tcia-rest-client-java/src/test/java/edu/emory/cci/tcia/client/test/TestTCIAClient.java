@@ -28,17 +28,19 @@ public class TestTCIAClient {
 	 *  Description : Returns set of all collection values
 	 */
 	
+	
+	
 	@Test
 	public void testGetCollectionValues()
 	{
-		String baseUrl = "http://10.28.163.174:9099/services/TCIA/TCIA/query/getCollectionValues" ; // Base URL of the service 
+		String baseUrl = "https://services.cancerimagingarchive.net/services/TCIA/TCIA/query/getCollectionValues" ; // Base URL of the service 
 		
 		// Set query parameters
 		Map<String,String> queryParams = new HashMap<String,String>();
 		queryParams.put("modality", "MR"); // set modality
 		
 		// Set API-Key
-		String apiKey = "31ed920f-ba6a-415f-966f-52c8e9eea649";
+		String apiKey = "a9312dfe-4465-4e0b-8b76-8eeab0b7a7aace5";
 		
 		// create TCIA Client by passing API-Key in the constructor
 		ITCIAClient client = new TCIAClientImpl(apiKey);
@@ -68,14 +70,14 @@ public class TestTCIAClient {
 	@Test
 	public void testGetImage()
 	{
-		String baseUrl = "http://10.28.163.174:9099/services/TCIA/TCIA/query/getImage" ; // Base URL of the service 
+		String baseUrl = "https://services.cancerimagingarchive.net/services/TCIA/TCIA/query/getImage" ; // Base URL of the service 
 		
 		// Set query parameters
 		Map<String,String> queryParams = new HashMap<String,String>();
 		queryParams.put("series_instance_uid", "1.3.6.1.4.1.9328.50.45.305379731379418833489008183081988213374"); // set series instance uid
 		
 		// Set API-Key
-		String apiKey = "31ed920f-ba6a-415f-966f-52c8e9eea649"; 
+		String apiKey = "a9312dfe-4465-4e0b-8b76-8eeab0b7a7aace5"; 
 		
 		// create TCIA Client by passing API-Key in the constructor
 		ITCIAClient client = new TCIAClientImpl(apiKey);
