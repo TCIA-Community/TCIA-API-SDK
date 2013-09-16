@@ -1,19 +1,19 @@
 package edu.emory.cci.tcia.client.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.junit.Test;
 
+import edu.emory.cci.tcia.client.ITCIAClient;
+import edu.emory.cci.tcia.client.ITCIAClient.ImageResult;
+import edu.emory.cci.tcia.client.OutputFormat;
 import edu.emory.cci.tcia.client.TCIAClientException;
 import edu.emory.cci.tcia.client.TCIAClientImpl;
-import edu.emory.cci.tcia.client.ITCIAClient;
 
 
 
@@ -23,41 +23,34 @@ import edu.emory.cci.tcia.client.ITCIAClient;
  */
 public class TestTCIAClient {
 
+	private static String baseUrl = "https://services.cancerimagingarchive.net/services/TCIA/TCIA/query"; // Base URL of the service
+	private static String apiKey = "<api_key>";
+	
 	/**
 	 *  Method : GetCollectionValues
 	 *  Description : Returns set of all collection values
 	 */
 	
-	
-	
 	@Test
 	public void testGetCollectionValues()
 	{
-		String baseUrl = "https://services.cancerimagingarchive.net/services/TCIA/TCIA/query/getCollectionValues" ; // Base URL of the service 
-		
-		// Set query parameters
-		Map<String,String> queryParams = new HashMap<String,String>();
-		queryParams.put("modality", "MR"); // set modality
-		
-		// Set API-Key
-		String apiKey = "a9312dfe-4465-4e0b-8b76-8eeab0b7a7aace5";
-		
-		// create TCIA Client by passing API-Key in the constructor
-		ITCIAClient client = new TCIAClientImpl(apiKey);
+		// create TCIA Client by passing API-Key and baseUrl in the constructor
+		ITCIAClient client = new TCIAClientImpl(apiKey , baseUrl);
 		
 		try {
 			// Make the RESTfull call . Response comes back as InputStream. 
-			InputStream is = client.execute(baseUrl, queryParams);
-			
-			// Assert response is not null
-			assertNotNull(is);
+			String respXML = client.getCollectionValues(OutputFormat.xml);
+			String respJSON = client.getCollectionValues(OutputFormat.json);
+			String respCSV = client.getCollectionValues(OutputFormat.csv);
 			
 			// Print server response
-			System.out.println(toString(is));
+			System.out.println(respXML);
+			System.out.println(respJSON);
+			System.out.println(respCSV);
 			
 		} catch (TCIAClientException e) {
 				fail(e.getMessage()); // request failed
-		} catch (IOException e) {
+		} catch (Exception e) {
 			fail(e.getMessage()); // request failed
 		}
 	}
@@ -70,46 +63,199 @@ public class TestTCIAClient {
 	@Test
 	public void testGetImage()
 	{
-		String baseUrl = "https://services.cancerimagingarchive.net/services/TCIA/TCIA/query/getImage" ; // Base URL of the service 
 		
-		// Set query parameters
-		Map<String,String> queryParams = new HashMap<String,String>();
-		queryParams.put("series_instance_uid", "1.3.6.1.4.1.9328.50.45.305379731379418833489008183081988213374"); // set series instance uid
-		
-		// Set API-Key
-		String apiKey = "a9312dfe-4465-4e0b-8b76-8eeab0b7a7aace5"; 
-		
-		// create TCIA Client by passing API-Key in the constructor
-		ITCIAClient client = new TCIAClientImpl(apiKey);
-		
+		// create TCIA Client by passing API-Key and baseUrl in the constructor
+		ITCIAClient client = new TCIAClientImpl(apiKey , baseUrl);
+		String seriesInstanceUID = "1.3.6.1.4.1.14519.5.2.1.7695.4001.306204232344341694648035234440";
 		try {
 			// Make the RESTfull call . Response comes back as InputStream. 
-			InputStream is = client.execute(baseUrl, queryParams);
-			
-			// Assert response is not null
-			assertNotNull(is);
-			
-			// Save the zip file 
-			saveTo(is, "images.zip", "."); // save as images.zip in current directory
+			ImageResult imageResult = client.getImage(seriesInstanceUID);
+			double averageDICOMFileSize = 200 * 1024d ; // 200KB
+			double compressionRatio = 0.75 ; // approx
+			int estimatedFileSize = (int) (averageDICOMFileSize * compressionRatio * imageResult.getImageCount());
+			saveTo(imageResult.getRawData(),  seriesInstanceUID + ".zip", ".", estimatedFileSize);
 			
 		} catch (TCIAClientException e) {
 				fail(e.getMessage()); // request failed
-		} catch (IOException e) {
+		} catch (Exception e) {
 			fail(e.getMessage()); // request failed
 		}
+
 	}
 	
+
+	@Test
+	public void testGetSeries()
+	{
+		// create TCIA Client by passing API-Key and baseUrl in the constructor
+		ITCIAClient client = new TCIAClientImpl(apiKey , baseUrl);
+		String collection = "TCGA-GBM"; // optional
+		String modality = "MR"; // optional
+		String studyInstanceUID = null; // optional
+		
+		try {
+			// Make the RESTfull call . Response comes back as InputStream. 
+			String respJSON = client.getSeries(collection, modality, studyInstanceUID, OutputFormat.json);
+			
+			
+			// Print server response
+			System.out.println(respJSON);
+			
+			
+		} catch (TCIAClientException e) {
+				fail(e.getMessage()); // request failed
+		} catch (Exception e) {
+			fail(e.getMessage()); // request failed
+		}
+
+	}
+
+	
+	@Test
+	public void testGetPatientStudy()
+	{
+		// create TCIA Client by passing API-Key and baseUrl in the constructor
+		ITCIAClient client = new TCIAClientImpl(apiKey , baseUrl);
+		String collection = "TCGA-GBM"; // optional
+		String patientID = null; // optional
+		String studyInstanceUID = null; // optional
+		
+		try {
+			// Make the RESTfull call . Response comes back as InputStream. 
+			String respJSON = client.getPatientStudy(collection, patientID, studyInstanceUID, OutputFormat.json);
+			
+			// Print server response
+			System.out.println(respJSON);
+			
+			
+		} catch (TCIAClientException e) {
+				fail(e.getMessage()); // request failed
+		} catch (Exception e) {
+			fail(e.getMessage()); // request failed
+		}
+
+	}
+
+	@Test
+	public void testGetPatient()
+	{
+		// create TCIA Client by passing API-Key and baseUrl in the constructor
+		ITCIAClient client = new TCIAClientImpl(apiKey , baseUrl);
+		String collection = "TCGA-GBM"; // optional
+		
+		try {
+			// Make the RESTfull call . Response comes back as InputStream. 
+			String respJSON = client.getPatient(collection , OutputFormat.json);
+			
+			// Print server response
+			System.out.println(respJSON);
+			
+			
+		} catch (TCIAClientException e) {
+				fail(e.getMessage()); // request failed
+		} catch (Exception e) {
+			fail(e.getMessage()); // request failed
+		}
+
+	}
+	
+	@Test
+	public void testGetBodyPartValues()
+	{
+		// create TCIA Client by passing API-Key and baseUrl in the constructor
+		ITCIAClient client = new TCIAClientImpl(apiKey , baseUrl);
+		String collection = null ; // optional
+		String bodyPartExamined = null; // optional
+		String modality = "MR"; // optional
+		
+		try {
+			// Make the RESTfull call . Response comes back as InputStream. 
+			String respJSON = client.getBodyPartValues(collection, bodyPartExamined, modality, OutputFormat.json);
+			
+			// Print server response
+			System.out.println(respJSON);
+			
+			
+		} catch (TCIAClientException e) {
+				fail(e.getMessage()); // request failed
+		} catch (Exception e) {
+			fail(e.getMessage()); // request failed
+		}
+
+	}
+	
+	@Test
+	public void testGetModalityValues()
+	{
+		// create TCIA Client by passing API-Key and baseUrl in the constructor
+		ITCIAClient client = new TCIAClientImpl(apiKey , baseUrl);
+		String collection = null ; // optional
+		String bodyPartExamined = "BRAIN"; // optional
+		String modality = "MR"; // optional
+		
+		try {
+			// Make the RESTfull call . Response comes back as InputStream. 
+			String respJSON = client.getModalityValues(collection, bodyPartExamined, modality, OutputFormat.json);
+			
+			// Print server response
+			System.out.println(respJSON);
+			
+			
+		} catch (TCIAClientException e) {
+				fail(e.getMessage()); // request failed
+		} catch (Exception e) {
+			fail(e.getMessage()); // request failed
+		}
+
+	}
+	
+	@Test
+	public void testGetManufacturerValues()
+	{
+		// create TCIA Client by passing API-Key and baseUrl in the constructor
+		ITCIAClient client = new TCIAClientImpl(apiKey , baseUrl);
+		String collection = null ; // optional
+		String bodyPartExamined = "BRAIN"; // optional
+		String modality = "MR"; // optional
+		
+		try {
+			// Make the RESTfull call . Response comes back as InputStream. 
+			String respJSON = client.getManufacturerValues(collection, bodyPartExamined, modality, OutputFormat.json);
+			
+			// Print server response
+			System.out.println(respJSON);
+			
+			
+		} catch (TCIAClientException e) {
+				fail(e.getMessage()); // request failed
+		} catch (Exception e) {
+			fail(e.getMessage()); // request failed
+		}
+
+	}
+
 	
 	
-	public static void saveTo(InputStream in , String name , String directory) throws IOException
+	
+	
+	public static void saveTo(InputStream in , String name , String directory , int estimatedBytes) throws IOException
 	{
 		FileOutputStream fos = new FileOutputStream(directory + "/" + name);
 		byte[] buffer = new byte[4096];
 		int read = -1;
+		int sum = 0;
 		while((read = in.read(buffer)) > 0)
 		{
 			fos.write(buffer , 0 , read);
+			long mseconds = System.currentTimeMillis();
+			sum += read;
+			
+			if(mseconds % 10 == 0)
+			{
+				System.out.println(String.format("Bytes Written %s out of estimated %s  : " , sum , estimatedBytes));
+			}
 		}
+		
 		fos.close();
 		in.close();
 	}
