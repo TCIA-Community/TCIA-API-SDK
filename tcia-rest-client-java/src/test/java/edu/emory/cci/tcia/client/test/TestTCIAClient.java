@@ -28,7 +28,7 @@ public class TestTCIAClient {
 	
 	/**
 	 *  Method : GetCollectionValues
-	 *  Description : Returns set of all collection values
+	 *  Description : Returns  set of all collection values
 	 */
 	
 	@Test
