@@ -23,7 +23,6 @@ public class TCIAClientImpl implements ITCIAClient{
 	private static  String getCollectionValues = "getCollectionValues";
 	private static  String getBodyPartValues = "getBodyPartValues";
 	private static  String getPatientStudy = "getPatientStudy";
-	private static  String getImageMetaData = "getImageMetaData";
 	private static  String getSeries = "getSeries";
 	private static  String getPatient = "getPatient";
 	
@@ -213,29 +212,7 @@ public class TCIAClientImpl implements ITCIAClient{
 			throw new TCIAClientException( e , baseUrl); 
 		}
 	}
-	public String getImageMetaData(String seriesInstanceUID, OutputFormat format)
-			throws TCIAClientException {
-		try {
-			URI baseUri = new URI(baseUrl);
-			URIBuilder uriBuilder = new URIBuilder( baseUri.toString() + "/" + getImageMetaData);
-			
-			if(seriesInstanceUID!=null)
-				uriBuilder.addParameter(DICOMAttributes.SERIES_INSTANCE_UID, seriesInstanceUID);
-			
-			uriBuilder.addParameter("format", format.name());
-			
-			URI uri = uriBuilder.build();
-			InputStream is = getRawData(uri);
-			return convertStreamToString(is);
-			
-		} 
-		catch (TCIAClientException e) {
-			throw e;
-		}
-		catch (Exception e) {
-			throw new TCIAClientException( e , baseUrl); 
-		}
-	}
+	
 	public String getSeries(String collection, String modality,
 			String studyInstanceUID, OutputFormat format)
 			throws TCIAClientException {
