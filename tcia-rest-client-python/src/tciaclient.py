@@ -84,7 +84,7 @@ def printServerResponse(response):
         print "Error : " + str(response.getcode) # print error code
 
 # Instantiate TCIAClient object
-tcia_client = TCIAClient(apiKey = "<api_key>" , baseUrl = "https://services.cancerimagingarchive.net/services/TCIA/TCIA/query")  
+tcia_client = TCIAClient(apiKey = "" , baseUrl = "https://services.cancerimagingarchive.net/services/TCIA/TCIA/query")  # Set the API-Key
 
 # test get_manufacturer_values
 try:    
