@@ -13,7 +13,7 @@ class TCIAClient:
     GET_SERIES = "getSeries"
     GET_PATIENT = "getPatient"
     GET_SERIES_SIZE = "getSeriesSize"
-    GET_CONTENTS_BY_NAME = "ContentsByName"
+    CONTENTS_BY_NAME = "ContentsByName"
     
     def __init__(self, apiKey , baseUrl, resource):
         self.apiKey = apiKey
@@ -34,7 +34,7 @@ class TCIAClient:
         resp = self.execute(serviceUrl , queryParameters)
         return resp
     
-    def get_series__size(self, SeriesInstanceUID = None, outputFormat = "json" ):
+    def get_series_size(self, SeriesInstanceUID = None, outputFormat = "json"):
         serviceUrl = self.baseUrl + "/query/" + self.GET_SERIES_SIZE
         queryParameters = {"SeriesInstanceUID" : SeriesInstanceUID, "format" :
                            outputFormat}
@@ -44,10 +44,11 @@ class TCIAClient:
     def contents_by_name(self, name = None):
         serviceUrl = self.baseUrl + "/query/" + self.CONTENTS_BY_NAME
         queryParameters = {"name" : name}
-        rep = self.execute(serviceUrl,queryParameters)
+        print serviceUrl
+        resp = self.execute(serviceUrl,queryParameters)
         return resp
 
-    def get_manufacturer_values(self,collection = None , bodyPartExamined = None , modality = None , outputFormat = "json" ):
+    def get_manufacturer_values(self,collection = None , bodyPartExamined = None, modality = None , outputFormat = "json"):
         serviceUrl = self.baseUrl + "/query/" + self.GET_MANUFACTURER_VALUES
         queryParameters = {"Collection" : collection , "BodyPartExamined" : bodyPartExamined , "Modality" : modality , "format" : outputFormat }
         resp = self.execute(serviceUrl , queryParameters)
@@ -57,7 +58,6 @@ class TCIAClient:
         serviceUrl = self.baseUrl + "/query/" + self.GET_COLLECTION_VALUES
         queryParameters = { "format" : outputFormat }
         resp = self.execute(serviceUrl , queryParameters)
-        return resp
         
     def get_body_part_values(self,collection = None , bodyPartExamined = None , modality = None , outputFormat = "json" ):
         serviceUrl = self.baseUrl + "/query/" + self.GET_BODY_PART_VALUES
