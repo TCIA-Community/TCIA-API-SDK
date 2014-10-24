@@ -27,7 +27,7 @@ public class TestTCIAClient {
 	private static String resourceTCIA = "/TCIA";
 	private static String resourceSharedList = "/SharedList";
 	
-	private static String apiKey = "";
+	private static String apiKey = "f354b370-f1ef-486c-beaa-3a6ba6868504";
 	
 	/**
 	 *  Method : GetCollectionValues
@@ -199,6 +199,27 @@ public class TestTCIAClient {
 		try {
 			// Make the RESTfull call . Response comes back as InputStream. 
 			String respJSON = client.getModalityValues(collection, bodyPartExamined, modality, OutputFormat.json);
+			
+			// Print server response
+			System.out.println(respJSON);
+			
+			
+		} catch (TCIAClientException e) {
+				fail(e.getMessage()); // request failed
+		} catch (Exception e) {
+			fail(e.getMessage()); // request failed
+		}
+
+	}
+	
+	@Test
+	public void testGetSharedList()
+	{
+		ITCIAClient client = new TCIAClientImpl(apiKey , baseUrl+resourceSharedList);
+		String name = "sharedListApiUnitTest";
+		try {
+			// Make the RESTfull call . Response comes back as InputStream. 
+			String respJSON = client.getSharedList(name, OutputFormat.json);
 			
 			// Print server response
 			System.out.println(respJSON);

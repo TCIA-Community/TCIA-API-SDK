@@ -25,6 +25,7 @@ public class TCIAClientImpl implements ITCIAClient{
 	private static  String getPatientStudy = "/query/getPatientStudy";
 	private static  String getSeries = "/query/getSeries";
 	private static  String getPatient = "/query/getPatient";
+	private static  String getSharedList = "/query/ContentsByName";
 	
 	
 	public TCIAClientImpl(String apiKey , String baseUrl)
@@ -267,6 +268,32 @@ public class TCIAClientImpl implements ITCIAClient{
 			throw new TCIAClientException( e , baseUrl); 
 		}
 	}
+	
+	public String getSharedList(String name, OutputFormat format) 
+			throws TCIAClientException {
+		try {
+			URI baseUri = new URI(baseUrl);
+			URIBuilder uriBuilder = new URIBuilder( baseUri.toString() + getSharedList);
+			
+			if(name!=null)
+				uriBuilder.addParameter("name", name);
+			
+			uriBuilder.addParameter("format", format.name());
+			
+			URI uri = uriBuilder.build();
+			InputStream is = getRawData(uri);
+			return convertStreamToString(is);
+			
+		} 
+		catch (TCIAClientException e) {
+			throw e;
+		}
+		catch (Exception e) {
+			throw new TCIAClientException( e , baseUrl); 
+		}
+	}
+
+	
 	public ImageResult getImage(String seriesInstanceUID)
 			throws TCIAClientException {
 		try {

@@ -12,6 +12,7 @@ public interface ITCIAClient {
 	public String getSeries(String collection,String modality,String studyInstanceUID, OutputFormat format) throws TCIAClientException;
 	public String getPatient(String collection, OutputFormat format) throws TCIAClientException;
 	public ImageResult getImage(String seriesInstanceUID) throws TCIAClientException;
+	public String getSharedList(String name, OutputFormat json) throws TCIAClientException;
 	
 	public static class ImageResult {
 		private InputStream rawData;
@@ -30,4 +31,5 @@ public interface ITCIAClient {
 		}
 		
 	}
+
 }
