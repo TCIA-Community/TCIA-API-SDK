@@ -12,10 +12,12 @@ class TCIAClient:
     GET_PATIENT_STUDY = "getPatientStudy"
     GET_SERIES = "getSeries"
     GET_PATIENT = "getPatient"
+    GET_SERIES_SIZE = "getSeriesSize"
+    GET_CONTENTS_BY_NAME = "ContentsByName"
     
-    def __init__(self, apiKey , baseUrl):
+    def __init__(self, apiKey , baseUrl, resource):
         self.apiKey = apiKey
-        self.baseUrl = baseUrl
+        self.baseUrl = baseUrl + "/" + resource
         
     def execute(self, url, queryParameters={}):
         queryParameters = dict((k, v) for k, v in queryParameters.iteritems() if v)
@@ -32,6 +34,13 @@ class TCIAClient:
         resp = self.execute(serviceUrl , queryParameters)
         return resp
     
+    def get_series__size(self, SeriesInstanceUID = None, outputFormat = "json" ):
+        serviceUrl = self.baseUrl + "/" + self.GET_SERIES_SIZE
+        queryParameters = {"SeriesInstanceUID" : SeriesInstanceUID, "format" :
+                           outputFormat}
+        resp = self.execute(serviceUrl, queryParameters)
+        return resp
+
     def get_manufacturer_values(self,collection = None , bodyPartExamined = None , modality = None , outputFormat = "json" ):
         serviceUrl = self.baseUrl + "/" + self.GET_MANUFACTURER_VALUES
         queryParameters = {"Collection" : collection , "BodyPartExamined" : bodyPartExamined , "Modality" : modality , "format" : outputFormat }
@@ -82,42 +91,3 @@ def printServerResponse(response):
     
     else:
         print "Error : " + str(response.getcode) # print error code
-
-# Instantiate TCIAClient object
-tcia_client = TCIAClient(apiKey = "" , baseUrl = "https://services.cancerimagingarchive.net/services/TCIA/TCIA/query")  # Set the API-Key
-
-# test get_manufacturer_values
-try:    
-    response = tcia_client.get_manufacturer_values(collection = None, bodyPartExamined = None, modality =None, outputFormat = "json")
-    printServerResponse(response);
-except urllib2.HTTPError, err:
-    print "Error executing program:\nError Code: ", str(err.code) , "\nMessage: " , err.read()
-
-try:
-    response = tcia_client.get_manufacturer_values(collection = "TCGA-GBM", bodyPartExamined = None, modality =None, outputFormat = "csv")
-    printServerResponse(response);
-except urllib2.HTTPError, err:
-    print "Error executing program:\nError Code: ", str(err.code) , "\nMessage: " , err.read()
-try:
-    response = tcia_client.get_manufacturer_values(collection = "TCGA-GBM", bodyPartExamined = None, modality ="MR", outputFormat = "xml")
-    printServerResponse(response);
-except urllib2.HTTPError, err:
-    print "Error executing program:\nError Code: ", str(err.code) , "\nMessage: " , err.read()
-    
-
-# test get_image
-try:
-    response = tcia_client.get_image(seriesInstanceUid = "1.3.6.1.4.1.14519.5.2.1.7695.4001.306204232344341694648035234440");
-    # Save server response as images.zip in current directory
-    if response.getcode() == 200:
-        print "\n" + str(response.info())
-        bytesRead = response.read()
-        fout = open("images.zip", "wb")
-        fout.write(bytesRead)
-        fout.close()
-        print "\nDownloaded file images.zip from the server"
-    else:
-        print "Error : " + str(response.getcode) # print error code
-        print "\n" + str(response.info())
-except urllib2.HTTPError, err:
-    print "Error executing program:\nError Code: ", str(err.code) , "\nMessage: " , err.read()
