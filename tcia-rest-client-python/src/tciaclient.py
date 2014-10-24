@@ -41,6 +41,12 @@ class TCIAClient:
         resp = self.execute(serviceUrl, queryParameters)
         return resp
 
+    def contents_by_name(self, name = None):
+        serviceUrl = self.baseUrl + "/" + self.CONTENTS_BY_NAME
+        queryParameters = {"name" : name}
+        rep = self.execute(serviceUrl,queryParameters)
+        return resp
+
     def get_manufacturer_values(self,collection = None , bodyPartExamined = None , modality = None , outputFormat = "json" ):
         serviceUrl = self.baseUrl + "/" + self.GET_MANUFACTURER_VALUES
         queryParameters = {"Collection" : collection , "BodyPartExamined" : bodyPartExamined , "Modality" : modality , "format" : outputFormat }
@@ -58,36 +64,27 @@ class TCIAClient:
         queryParameters = {"Collection" : collection , "BodyPartExamined" : bodyPartExamined , "Modality" : modality , "format" : outputFormat }
         resp = self.execute(serviceUrl , queryParameters)
         return resp
+    
     def get_patient_study(self,collection = None , patientId = None , studyInstanceUid = None , outputFormat = "json" ):
         serviceUrl = self.baseUrl + "/" + self.GET_PATIENT_STUDY
         queryParameters = {"Collection" : collection , "PatientID" : patientId , "StudyInstanceUID" : studyInstanceUid , "format" : outputFormat }
         resp = self.execute(serviceUrl , queryParameters)
         return resp
+    
     def get_series(self, collection = None , modality = None , studyInstanceUid = None , outputFormat = "json" ):
         serviceUrl = self.baseUrl + "/" + self.GET_SERIES
         queryParameters = {"Collection" : collection , "StudyInstanceUID" : studyInstanceUid , "Modality" : modality , "format" : outputFormat }
         resp = self.execute(serviceUrl , queryParameters)
         return resp
+    
     def get_patient(self,collection = None , outputFormat = "json" ):
         serviceUrl = self.baseUrl + "/" + self.GET_PATIENT
         queryParameters = {"Collection" : collection , "format" : outputFormat }
         resp = self.execute(serviceUrl , queryParameters)
         return resp
+    
     def get_image(self , seriesInstanceUid):
         serviceUrl = self.baseUrl + "/" + self.GET_IMAGE
         queryParameters = { "SeriesInstanceUID" : seriesInstanceUid }
         resp = self.execute( serviceUrl , queryParameters)
         return resp
-        
-    
-                
-        
-
-def printServerResponse(response):
-    if response.getcode() == 200:
-        print "Server Returned:\n"
-        print response.read()
-        print "\n"
-    
-    else:
-        print "Error : " + str(response.getcode) # print error code
