@@ -23,8 +23,11 @@ import edu.emory.cci.tcia.client.TCIAClientImpl;
  */
 public class TestTCIAClient {
 
-	private static String baseUrl = "https://services-test.cancerimagingarchive.net/services/TCIA/TCIA/query"; // Base URL of the service
-	private static String apiKey = "";
+	private static String baseUrl = "https://services.cancerimagingarchive.net/services/v2"; // Base URL of the service
+	private static String resourceTCIA = "/TCIA";
+	private static String resourceSharedList = "/SharedList";
+	
+	private static String apiKey = "f354b370-f1ef-486c-beaa-3a6ba6868504";
 	
 	/**
 	 *  Method : GetCollectionValues
@@ -35,7 +38,7 @@ public class TestTCIAClient {
 	public void testGetCollectionValues()
 	{
 		// create TCIA Client by passing API-Key and baseUrl in the constructor
-		ITCIAClient client = new TCIAClientImpl(apiKey , baseUrl);
+		ITCIAClient client = new TCIAClientImpl(apiKey , baseUrl+resourceTCIA);
 		
 		try {
 			// Make the RESTfull call . Response comes back as InputStream. 
@@ -65,7 +68,7 @@ public class TestTCIAClient {
 	{
 		
 		// create TCIA Client by passing API-Key and baseUrl in the constructor
-		ITCIAClient client = new TCIAClientImpl(apiKey , baseUrl);
+		ITCIAClient client = new TCIAClientImpl(apiKey , baseUrl+resourceTCIA);
 		String seriesInstanceUID = "1.3.6.1.4.1.14519.5.2.1.7695.4001.306204232344341694648035234440";
 		try {
 			// Make the RESTfull call . Response comes back as InputStream. 
@@ -88,7 +91,7 @@ public class TestTCIAClient {
 	public void testGetSeries()
 	{
 		// create TCIA Client by passing API-Key and baseUrl in the constructor
-		ITCIAClient client = new TCIAClientImpl(apiKey , baseUrl);
+		ITCIAClient client = new TCIAClientImpl(apiKey , baseUrl+resourceTCIA);
 		String collection = "TCGA-GBM"; // optional
 		String modality = "MR"; // optional
 		String studyInstanceUID = null; // optional
@@ -115,7 +118,7 @@ public class TestTCIAClient {
 	public void testGetPatientStudy()
 	{
 		// create TCIA Client by passing API-Key and baseUrl in the constructor
-		ITCIAClient client = new TCIAClientImpl(apiKey , baseUrl);
+		ITCIAClient client = new TCIAClientImpl(apiKey , baseUrl+resourceTCIA);
 		String collection = "TCGA-GBM"; // optional
 		String patientID = null; // optional
 		String studyInstanceUID = null; // optional
@@ -140,7 +143,7 @@ public class TestTCIAClient {
 	public void testGetPatient()
 	{
 		// create TCIA Client by passing API-Key and baseUrl in the constructor
-		ITCIAClient client = new TCIAClientImpl(apiKey , baseUrl);
+		ITCIAClient client = new TCIAClientImpl(apiKey , baseUrl+resourceTCIA);
 		String collection = "TCGA-GBM"; // optional
 		
 		try {
@@ -163,7 +166,7 @@ public class TestTCIAClient {
 	public void testGetBodyPartValues()
 	{
 		// create TCIA Client by passing API-Key and baseUrl in the constructor
-		ITCIAClient client = new TCIAClientImpl(apiKey , baseUrl);
+		ITCIAClient client = new TCIAClientImpl(apiKey , baseUrl+resourceTCIA);
 		String collection = null ; // optional
 		String bodyPartExamined = null; // optional
 		String modality = "MR"; // optional
@@ -188,7 +191,7 @@ public class TestTCIAClient {
 	public void testGetModalityValues()
 	{
 		// create TCIA Client by passing API-Key and baseUrl in the constructor
-		ITCIAClient client = new TCIAClientImpl(apiKey , baseUrl);
+		ITCIAClient client = new TCIAClientImpl(apiKey , baseUrl+resourceTCIA);
 		String collection = null ; // optional
 		String bodyPartExamined = "BRAIN"; // optional
 		String modality = "MR"; // optional
@@ -210,10 +213,31 @@ public class TestTCIAClient {
 	}
 	
 	@Test
+	public void testGetSharedList()
+	{
+		ITCIAClient client = new TCIAClientImpl(apiKey , baseUrl+resourceSharedList);
+		String name = "sharedListApiUnitTest";
+		try {
+			// Make the RESTfull call . Response comes back as InputStream. 
+			String respJSON = client.getSharedList(name, OutputFormat.json);
+			
+			// Print server response
+			System.out.println(respJSON);
+			
+			
+		} catch (TCIAClientException e) {
+				fail(e.getMessage()); // request failed
+		} catch (Exception e) {
+			fail(e.getMessage()); // request failed
+		}
+
+	}
+	
+	@Test
 	public void testGetManufacturerValues()
 	{
 		// create TCIA Client by passing API-Key and baseUrl in the constructor
-		ITCIAClient client = new TCIAClientImpl(apiKey , baseUrl);
+		ITCIAClient client = new TCIAClientImpl(apiKey , baseUrl+resourceTCIA);
 		String collection = null ; // optional
 		String bodyPartExamined = "BRAIN"; // optional
 		String modality = "MR"; // optional

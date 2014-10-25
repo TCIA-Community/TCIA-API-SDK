@@ -16,15 +16,16 @@ public class TCIAClientImpl implements ITCIAClient{
 	private final static String API_KEY_FIELD = "api_key";
 	private String apiKey;
 	private DefaultHttpClient httpClient ;
-	private String baseUrl ;
-	private static String getImage = "getImage";
-	private static String getManufacturerValues = "getManufacturerValues";
-	private static  String getModalityValues = "getModalityValues";
-	private static  String getCollectionValues = "getCollectionValues";
-	private static  String getBodyPartValues = "getBodyPartValues";
-	private static  String getPatientStudy = "getPatientStudy";
-	private static  String getSeries = "getSeries";
-	private static  String getPatient = "getPatient";
+	private String baseUrl;
+	private static String getImage = "/query/getImage";
+	private static String getManufacturerValues = "/query/getManufacturerValues";
+	private static  String getModalityValues = "/query/getModalityValues";
+	private static  String getCollectionValues = "/query/getCollectionValues";
+	private static  String getBodyPartValues = "/query/getBodyPartValues";
+	private static  String getPatientStudy = "/query/getPatientStudy";
+	private static  String getSeries = "/query/getSeries";
+	private static  String getPatient = "/query/getPatient";
+	private static  String getSharedList = "/query/ContentsByName";
 	
 	
 	public TCIAClientImpl(String apiKey , String baseUrl)
@@ -32,6 +33,7 @@ public class TCIAClientImpl implements ITCIAClient{
 		this.apiKey = apiKey;
 		this.baseUrl = baseUrl;
 		httpClient = new DefaultHttpClient();
+		httpClient = WebClientDevWrapper.wrapClient(httpClient);
 	}
 	
 	static String convertStreamToString(java.io.InputStream is) {
@@ -43,7 +45,7 @@ public class TCIAClientImpl implements ITCIAClient{
 			String modality, OutputFormat format) throws TCIAClientException {
 		try {
 			URI baseUri = new URI(baseUrl);
-			URIBuilder uriBuilder = new URIBuilder( baseUri.toString() + "/" + getModalityValues);
+			URIBuilder uriBuilder = new URIBuilder( baseUri.toString() + getModalityValues);
 			
 			if(collection!=null)
 				uriBuilder.addParameter(DICOMAttributes.COLLECTION, collection);
@@ -108,7 +110,7 @@ public class TCIAClientImpl implements ITCIAClient{
 			throws TCIAClientException {
 		try {
 			URI baseUri = new URI(baseUrl);
-			URIBuilder uriBuilder = new URIBuilder( baseUri.toString() + "/" + getManufacturerValues);
+			URIBuilder uriBuilder = new URIBuilder( baseUri.toString() + getManufacturerValues);
 			
 			if(collection!=null)
 				uriBuilder.addParameter(DICOMAttributes.COLLECTION, collection);
@@ -137,7 +139,7 @@ public class TCIAClientImpl implements ITCIAClient{
 			throws TCIAClientException {
 		try {
 			URI baseUri = new URI(baseUrl);
-			URIBuilder uriBuilder = new URIBuilder( baseUri.toString() + "/" + getCollectionValues);
+			URIBuilder uriBuilder = new URIBuilder( baseUri.toString() + getCollectionValues);
 			uriBuilder.addParameter("format", format.name());
 			
 			URI uri = uriBuilder.build();
@@ -156,7 +158,7 @@ public class TCIAClientImpl implements ITCIAClient{
 			String modality, OutputFormat format) throws TCIAClientException {
 		try {
 			URI baseUri = new URI(baseUrl);
-			URIBuilder uriBuilder = new URIBuilder( baseUri.toString() + "/" + getBodyPartValues);
+			URIBuilder uriBuilder = new URIBuilder( baseUri.toString() + getBodyPartValues);
 			
 			if(collection!=null)
 				uriBuilder.addParameter(DICOMAttributes.COLLECTION, collection);
@@ -187,7 +189,7 @@ public class TCIAClientImpl implements ITCIAClient{
 			throws TCIAClientException {
 		try {
 			URI baseUri = new URI(baseUrl);
-			URIBuilder uriBuilder = new URIBuilder( baseUri.toString() + "/" + getPatientStudy);
+			URIBuilder uriBuilder = new URIBuilder( baseUri.toString() + getPatientStudy);
 			
 			if(collection!=null)
 				uriBuilder.addParameter(DICOMAttributes.COLLECTION, collection);
@@ -218,7 +220,7 @@ public class TCIAClientImpl implements ITCIAClient{
 			throws TCIAClientException {
 		try {
 			URI baseUri = new URI(baseUrl);
-			URIBuilder uriBuilder = new URIBuilder( baseUri.toString() + "/" + getSeries);
+			URIBuilder uriBuilder = new URIBuilder( baseUri.toString() + getSeries);
 			
 			if(collection!=null)
 				uriBuilder.addParameter(DICOMAttributes.COLLECTION, collection);
@@ -247,7 +249,7 @@ public class TCIAClientImpl implements ITCIAClient{
 			throws TCIAClientException {
 		try {
 			URI baseUri = new URI(baseUrl);
-			URIBuilder uriBuilder = new URIBuilder( baseUri.toString() + "/" + getPatient);
+			URIBuilder uriBuilder = new URIBuilder( baseUri.toString() + getPatient);
 			
 			if(collection!=null)
 				uriBuilder.addParameter(DICOMAttributes.COLLECTION, collection);
@@ -266,11 +268,37 @@ public class TCIAClientImpl implements ITCIAClient{
 			throw new TCIAClientException( e , baseUrl); 
 		}
 	}
+	
+	public String getSharedList(String name, OutputFormat format) 
+			throws TCIAClientException {
+		try {
+			URI baseUri = new URI(baseUrl);
+			URIBuilder uriBuilder = new URIBuilder( baseUri.toString() + getSharedList);
+			
+			if(name!=null)
+				uriBuilder.addParameter("name", name);
+			
+			uriBuilder.addParameter("format", format.name());
+			
+			URI uri = uriBuilder.build();
+			InputStream is = getRawData(uri);
+			return convertStreamToString(is);
+			
+		} 
+		catch (TCIAClientException e) {
+			throw e;
+		}
+		catch (Exception e) {
+			throw new TCIAClientException( e , baseUrl); 
+		}
+	}
+
+	
 	public ImageResult getImage(String seriesInstanceUID)
 			throws TCIAClientException {
 		try {
 			URI baseUri = new URI(baseUrl);
-			URIBuilder uriBuilder = new URIBuilder( baseUri.toString() + "/" + getImage);
+			URIBuilder uriBuilder = new URIBuilder( baseUri.toString() + getImage);
 			
 			if(seriesInstanceUID!=null)
 				uriBuilder.addParameter(DICOMAttributes.SERIES_INSTANCE_UID, seriesInstanceUID);
