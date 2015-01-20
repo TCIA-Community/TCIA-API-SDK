@@ -58,6 +58,7 @@ class TCIAClient:
         serviceUrl = self.baseUrl + "/query/" + self.GET_COLLECTION_VALUES
         queryParameters = { "format" : outputFormat }
         resp = self.execute(serviceUrl , queryParameters)
+        return resp
         
     def get_body_part_values(self,collection = None , bodyPartExamined = None , modality = None , outputFormat = "json" ):
         serviceUrl = self.baseUrl + "/query/" + self.GET_BODY_PART_VALUES
