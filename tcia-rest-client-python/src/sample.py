@@ -10,8 +10,8 @@ def printServerResponse(response):
         print "Error: " + str(response.getcode())
 
 ####################################  Create Clients for Two Different Resources  ####
-tcia_client = TCIAClient(apiKey = "YOUR API KEY HERE",baseUrl="https://services.cancerimagingarchive.net/services/v2",resource = "TCIA")
-tcia_client2 = TCIAClient(apiKey ="YOUR API KEY HERE",baseUrl="https://services.cancerimagingarchive.net/services/v2",resource="SharedList")
+tcia_client = TCIAClient(apiKey = "YOUR API KEY HERE",baseUrl="https://services.cancerimagingarchive.net/services/v3",resource = "TCIA")
+tcia_client2 = TCIAClient(apiKey ="YOUR API KEY HERE",baseUrl="https://services.cancerimagingarchive.net/services/v3",resource="SharedList")
 
 # Test content_by_name
 try:
@@ -46,22 +46,6 @@ try:
 except urllib2.HTTPError, err:
     print "Errror executing program:\nError Code: ", str(err.code), "\nMessage:", err.read()
 
-# Test get_image. 
+# Test get_image.
 # NOTE: Image response consumed differently
-try:
-    reponse = tcia_client.get_image(seriesInstanceUid ="1.3.6.1.4.1.14519.5.2.1.7695.4001.306204232344341694648035234440");
-
-    if response.getcode() == 200:
-        print "\n" + str(response.info())
-        bytesRead = response.read()
-        fout = open("images.zip","wb")
-        fout.write(bytesRead)
-        fout.close()
-        print "\nDownloaded file images.zip from the server"
-    else:
-        print "Error : " + str(response.getcode)
-        print "\n" + str(response.info())
-
-except urllib2.HTTPError, err:
-    print "Errror executing program:\nError Code: ", str(err.code), "\nMessage:", err.read()
-
+tcia_client.get_image(seriesInstanceUid ="1.3.6.1.4.1.14519.5.2.1.7695.4001.306204232344341694648035234440" , downloadPath  ="./", zipFileName ="images.zip");
