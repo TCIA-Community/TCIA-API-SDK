@@ -27,7 +27,7 @@ public class TestTCIAClient {
 	private static String resourceTCIA = "/TCIA";
 	private static String resourceSharedList = "/SharedList";
 	
-	private static String apiKey = "f354b370-f1ef-486c-beaa-3a6ba6868504";
+	private static String apiKey = "9d0d3230-45a6-4d9d-adf1-be6910a46bd2";
 	
 	/**
 	 *  Method : GetCollectionValues

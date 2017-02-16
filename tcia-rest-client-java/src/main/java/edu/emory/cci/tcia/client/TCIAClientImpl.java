@@ -57,8 +57,9 @@ public class TCIAClientImpl implements ITCIAClient{
 				uriBuilder.addParameter(DICOMAttributes.MODALITY, modality);
 			
 			uriBuilder.addParameter("format", format.name());
-			
-			URI uri = uriBuilder.build();
+            uriBuilder.addParameter(API_KEY_FIELD, apiKey);
+
+            URI uri = uriBuilder.build();
 			InputStream is = getRawData(uri);
 			return convertStreamToString(is);
 			
@@ -122,8 +123,9 @@ public class TCIAClientImpl implements ITCIAClient{
 				uriBuilder.addParameter(DICOMAttributes.MODALITY, modality);
 			
 			uriBuilder.addParameter("format", format.name());
-			
-			URI uri = uriBuilder.build();
+            uriBuilder.addParameter(API_KEY_FIELD, apiKey);
+
+            URI uri = uriBuilder.build();
 			InputStream is = getRawData(uri);
 			return convertStreamToString(is);
 			
@@ -141,8 +143,9 @@ public class TCIAClientImpl implements ITCIAClient{
 			URI baseUri = new URI(baseUrl);
 			URIBuilder uriBuilder = new URIBuilder( baseUri.toString() + getCollectionValues);
 			uriBuilder.addParameter("format", format.name());
-			
-			URI uri = uriBuilder.build();
+            uriBuilder.addParameter(API_KEY_FIELD, apiKey);
+
+            URI uri = uriBuilder.build();
 			InputStream is = getRawData(uri);
 			return convertStreamToString(is);
 			
@@ -170,8 +173,9 @@ public class TCIAClientImpl implements ITCIAClient{
 				uriBuilder.addParameter(DICOMAttributes.MODALITY, modality);
 			
 			uriBuilder.addParameter("format", format.name());
-			
-			URI uri = uriBuilder.build();
+            uriBuilder.addParameter(API_KEY_FIELD, apiKey);
+
+            URI uri = uriBuilder.build();
 			InputStream is = getRawData(uri);
 			return convertStreamToString(is);
 			
@@ -201,8 +205,9 @@ public class TCIAClientImpl implements ITCIAClient{
 				uriBuilder.addParameter(DICOMAttributes.STUDY_INSTANCE_UID, studyInstanceUID);
 			
 			uriBuilder.addParameter("format", format.name());
-			
-			URI uri = uriBuilder.build();
+            uriBuilder.addParameter(API_KEY_FIELD, apiKey);
+
+            URI uri = uriBuilder.build();
 			InputStream is = getRawData(uri);
 			return convertStreamToString(is);
 			
@@ -232,8 +237,9 @@ public class TCIAClientImpl implements ITCIAClient{
 				uriBuilder.addParameter(DICOMAttributes.STUDY_INSTANCE_UID, studyInstanceUID);
 			
 			uriBuilder.addParameter("format", format.name());
-			
-			URI uri = uriBuilder.build();
+            uriBuilder.addParameter(API_KEY_FIELD, apiKey);
+
+            URI uri = uriBuilder.build();
 			InputStream is = getRawData(uri);
 			return convertStreamToString(is);
 			
@@ -255,8 +261,9 @@ public class TCIAClientImpl implements ITCIAClient{
 				uriBuilder.addParameter(DICOMAttributes.COLLECTION, collection);
 			
 			uriBuilder.addParameter("format", format.name());
-			
-			URI uri = uriBuilder.build();
+            uriBuilder.addParameter(API_KEY_FIELD, apiKey);
+
+            URI uri = uriBuilder.build();
 			InputStream is = getRawData(uri);
 			return convertStreamToString(is);
 			
@@ -279,8 +286,10 @@ public class TCIAClientImpl implements ITCIAClient{
 				uriBuilder.addParameter("name", name);
 			
 			uriBuilder.addParameter("format", format.name());
-			
-			URI uri = uriBuilder.build();
+            uriBuilder.addParameter(API_KEY_FIELD, apiKey);
+
+
+            URI uri = uriBuilder.build();
 			InputStream is = getRawData(uri);
 			return convertStreamToString(is);
 			
@@ -302,15 +311,13 @@ public class TCIAClientImpl implements ITCIAClient{
 			
 			if(seriesInstanceUID!=null)
 				uriBuilder.addParameter(DICOMAttributes.SERIES_INSTANCE_UID, seriesInstanceUID);
-			
-			
-			
-			URI uri = uriBuilder.build();
+
+            uriBuilder.addParameter(API_KEY_FIELD, apiKey);
+
+            URI uri = uriBuilder.build();
 			// create a new HttpGet request
 			HttpGet request = new HttpGet(uri);
 
-			// add api_key to the header
-			request.setHeader(API_KEY_FIELD, apiKey);
 			long startTime = System.currentTimeMillis();
 			HttpResponse response = httpClient.execute(request);
 			long diff = System.currentTimeMillis() - startTime;
