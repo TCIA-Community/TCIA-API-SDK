@@ -1,24 +1,25 @@
 from tciaclient import TCIAClient
-import urllib2, urllib,sys
+import urllib3, urllib,sys
 ####################################  Function to print server response #######
-def printServerResponse(response):
-    if response.getcode() == 200:
-        print "Server Returned:\n"
-        print response.read()
-        print "\n"
+def print_server_response(response):
+    if response.status == 200:
+        print("Server Returned:\n")
+        print(response.data.decode('utf-8'))
+        print("\n")
     else:
-        print "Error: " + str(response.getcode())
+        print("Error: " + str(response.status))
 
 ####################################  Create Clients for Two Different Resources  ####
-tcia_client = TCIAClient(apiKey = "YOUR API KEY HERE",baseUrl="https://services.cancerimagingarchive.net/services/v3",resource = "TCIA")
-tcia_client2 = TCIAClient(apiKey ="YOUR API KEY HERE",baseUrl="https://services.cancerimagingarchive.net/services/v3",resource="SharedList")
+kwargs = {}
+tcia_client = TCIAClient(apiKey=None, baseUrl="https://services.cancerimagingarchive.net/services/v3",resource = "TCIA",**kwargs)
+tcia_client2 = TCIAClient(apiKey=None, baseUrl="https://services.cancerimagingarchive.net/services/v3",resource="SharedList",**kwargs)
 
 # Test content_by_name
 try:
     response = tcia_client2.contents_by_name(name = "sharedListApiUnitTest")
-    printServerResponse(response);
-except urllib2.HTTPError, err:
-    print "Errror executing program:\nError Code: ", str(err.code), "\nMessage:", err.read()
+    print_server_response(response)
+except urllib3.exceptions.HTTPError as err:
+    print("Errror executing program:\nError Code: ", str(err.code), "\nMessage:", err.read())
 
 # Test get_manufacturer_values no query parameters
 try:
@@ -26,25 +27,25 @@ try:
                                                    None,bodyPartExamined =
                                                    None,modality =
                                                    None,outputFormat = "json")
-    printServerResponse(response);
+    print_server_response(response)
 
-except urllib2.HTTPError, err:
-    print "Errror executing program:\nError Code: ", str(err.code), "\nMessage:", err.read()
+except urllib3.exceptions.HTTPError as err:
+    print("Errror executing program:\nError Code: ", str(err.code), "\nMessage:", err.read())
 
 # Test get_series_size
 try:
     response = tcia_client.get_series_size(SeriesInstanceUID="1.3.6.1.4.1.14519.5.2.1.7695.4001.306204232344341694648035234440")
-    printServerResponse(response);
-except urllib2.HTTPError, err:
-    print "Errror executing program:\nError Code: ", str(err.code), "\nMessage:", err.read()
+    print_server_response(response)
+except urllib3.exceptions.HTTPError as err:
+    print("Errror executing program:\nError Code: ", str(err.code), "\nMessage:", err.read())
 
 # Test get_manufacturer_values with query Parameter
 try:
     response = tcia_client.get_manufacturer_values(collection = "TCGA-GBM",bodyPartExamined = None,modality = None, outputFormat = "csv")
-    printServerResponse(response);
+    print_server_response(response)
 
-except urllib2.HTTPError, err:
-    print "Errror executing program:\nError Code: ", str(err.code), "\nMessage:", err.read()
+except urllib3.exceptions.HTTPError as err:
+    print("Errror executing program:\nError Code: ", str(err.code), "\nMessage:", err.read())
 
 # Test get_image.
 # NOTE: Image response consumed differently

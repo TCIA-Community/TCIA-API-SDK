@@ -1,8 +1,10 @@
+# https://raw.githubusercontent.com/TCIA-Community/TCIA-API-SDK/master/tcia-rest-client-python/src/tciaclient.py
 import os
-import urllib2
+import urllib3
 import urllib
 import sys
 import math
+import traceback
 #
 # Refer https://wiki.cancerimagingarchive.net/display/Public/REST+API+Usage+Guide for complete list of API
 #
@@ -18,18 +20,22 @@ class TCIAClient:
     GET_SERIES_SIZE = "getSeriesSize"
     CONTENTS_BY_NAME = "ContentsByName"
 
-    def __init__(self, apiKey , baseUrl, resource):
+    def __init__(self, apiKey, baseUrl, resource):
         self.apiKey = apiKey
         self.baseUrl = baseUrl + "/" + resource
 
-    def execute(self, url, queryParameters={}):
-        queryParameters = dict((k, v) for k, v in queryParameters.iteritems() if v)
-        headers = {"api_key" : self.apiKey }
-        queryString = "?%s" % urllib.urlencode(queryParameters)
+    def execute(self, url, queryParameters={},preload_content=True):
+        queryParameters = dict((k, v) for k, v in queryParameters.items() if v)
+        
+        headers = {}
+        if self.apiKey is not None:
+            headers = {"api_key" : self.apiKey }
+
+        queryString = "?%s" % urllib.parse.urlencode(queryParameters)
         requestUrl = url + queryString
-        request = urllib2.Request(url=requestUrl , headers=headers)
-        resp = urllib2.urlopen(request)
-        return resp
+        http = urllib3.PoolManager()
+        request = http.request(method='GET', url=requestUrl , headers=headers, preload_content=preload_content)
+        return request
 
     def get_modality_values(self,collection = None , bodyPartExamined = None , modality = None , outputFormat = "json" ):
         serviceUrl = self.baseUrl + "/query/" + self.GET_MODALITY_VALUES
@@ -47,7 +53,6 @@ class TCIAClient:
     def contents_by_name(self, name = None):
         serviceUrl = self.baseUrl + "/query/" + self.CONTENTS_BY_NAME
         queryParameters = {"name" : name}
-        print serviceUrl
         resp = self.execute(serviceUrl,queryParameters)
         return resp
 
@@ -90,23 +95,20 @@ class TCIAClient:
     def get_image(self , seriesInstanceUid , downloadPath, zipFileName):
         serviceUrl = self.baseUrl + "/query/" + self.GET_IMAGE
         queryParameters = { "SeriesInstanceUID" : seriesInstanceUid }
-        os.umask(0002)
+        #os.umask(0002)
         try:
             file = os.path.join(downloadPath, zipFileName)
-            resp = self.execute( serviceUrl , queryParameters)
+            resp = self.execute( serviceUrl , queryParameters, preload_content=False)
             downloaded = 0
             CHUNK = 256 * 10240
             with open(file, 'wb') as fp:
-                while True:
-                    chunk = resp.read(CHUNK)
-                    downloaded += len(chunk)
-                    if not chunk: break
+                for chunk in resp.stream(CHUNK):
                     fp.write(chunk)
-        except urllib2.HTTPError, e:
-            print "HTTP Error:",e.code , serviceUrl
+        except urllib3.exceptions.HTTPError as e:
+            print("HTTP Error:",e.code , serviceUrl)
             return False
-        except urllib2.URLError, e:
-            print "URL Error:",e.reason , serviceUrl
+        except:
+            traceback.print_exc()
             return False
 
         return True
