@@ -10,9 +10,8 @@ def print_server_response(response):
         print("Error: " + str(response.status))
 
 ####################################  Create Clients for Two Different Resources  ####
-kwargs = {}
-tcia_client = TCIAClient(apiKey=None, baseUrl="https://services.cancerimagingarchive.net/services/v3",resource = "TCIA",**kwargs)
-tcia_client2 = TCIAClient(apiKey=None, baseUrl="https://services.cancerimagingarchive.net/services/v3",resource="SharedList",**kwargs)
+tcia_client = TCIAClient(apiKey=None, baseUrl="https://services.cancerimagingarchive.net/services/v3",resource = "TCIA")
+tcia_client2 = TCIAClient(apiKey=None, baseUrl="https://services.cancerimagingarchive.net/services/v3",resource="SharedList")
 
 # Test content_by_name
 try:

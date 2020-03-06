@@ -1,4 +1,6 @@
-# https://raw.githubusercontent.com/TCIA-Community/TCIA-API-SDK/master/tcia-rest-client-python/src/tciaclient.py
+# py2 https://raw.githubusercontent.com/TCIA-Community/TCIA-API-SDK/master/tcia-rest-client-python/src/tciaclient.py
+# py3 https://github.com/pangyuteng/TCIA-API-SDK/blob/py37/tcia-rest-client-python/src/tciaclient.py
+
 import os
 import urllib3
 import urllib
