@@ -18,16 +18,14 @@ class TCIAClient:
     GET_SERIES_SIZE = "getSeriesSize"
     CONTENTS_BY_NAME = "ContentsByName"
 
-    def __init__(self, apiKey , baseUrl, resource):
-        self.apiKey = apiKey
+    def __init__(self, baseUrl, resource):
         self.baseUrl = baseUrl + "/" + resource
 
     def execute(self, url, queryParameters={}):
         queryParameters = dict((k, v) for k, v in queryParameters.items() if v)
-        headers = {"api_key" : self.apiKey }
         queryString = "?%s" % urllib.parse.urlencode(queryParameters)
         requestUrl = url + queryString
-        request = urllib.request.Request(url=requestUrl , headers=headers)
+        request = urllib.request.Request(url=requestUrl)
         resp = urllib.request.urlopen(request)
         return resp
 
