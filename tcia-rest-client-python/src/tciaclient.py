@@ -1,6 +1,6 @@
 import os
-import urllib2
-import urllib
+import urllib.request, urllib.error, urllib.parse
+import urllib.request, urllib.parse, urllib.error
 import sys
 import math
 #
@@ -18,17 +18,15 @@ class TCIAClient:
     GET_SERIES_SIZE = "getSeriesSize"
     CONTENTS_BY_NAME = "ContentsByName"
 
-    def __init__(self, apiKey , baseUrl, resource):
-        self.apiKey = apiKey
+    def __init__(self, baseUrl, resource):
         self.baseUrl = baseUrl + "/" + resource
 
     def execute(self, url, queryParameters={}):
-        queryParameters = dict((k, v) for k, v in queryParameters.iteritems() if v)
-        headers = {"api_key" : self.apiKey }
-        queryString = "?%s" % urllib.urlencode(queryParameters)
+        queryParameters = dict((k, v) for k, v in queryParameters.items() if v)
+        queryString = "?%s" % urllib.parse.urlencode(queryParameters)
         requestUrl = url + queryString
-        request = urllib2.Request(url=requestUrl , headers=headers)
-        resp = urllib2.urlopen(request)
+        request = urllib.request.Request(url=requestUrl)
+        resp = urllib.request.urlopen(request)
         return resp
 
     def get_modality_values(self,collection = None , bodyPartExamined = None , modality = None , outputFormat = "json" ):
@@ -47,7 +45,7 @@ class TCIAClient:
     def contents_by_name(self, name = None):
         serviceUrl = self.baseUrl + "/query/" + self.CONTENTS_BY_NAME
         queryParameters = {"name" : name}
-        print serviceUrl
+        print(serviceUrl)
         resp = self.execute(serviceUrl,queryParameters)
         return resp
 
@@ -90,7 +88,7 @@ class TCIAClient:
     def get_image(self , seriesInstanceUid , downloadPath, zipFileName):
         serviceUrl = self.baseUrl + "/query/" + self.GET_IMAGE
         queryParameters = { "SeriesInstanceUID" : seriesInstanceUid }
-        os.umask(0002)
+        os.umask(0o002)
         try:
             file = os.path.join(downloadPath, zipFileName)
             resp = self.execute( serviceUrl , queryParameters)
@@ -102,11 +100,11 @@ class TCIAClient:
                     downloaded += len(chunk)
                     if not chunk: break
                     fp.write(chunk)
-        except urllib2.HTTPError, e:
-            print "HTTP Error:",e.code , serviceUrl
+        except urllib.error.HTTPError as e:
+            print("HTTP Error:",e.code , serviceUrl)
             return False
-        except urllib2.URLError, e:
-            print "URL Error:",e.reason , serviceUrl
+        except urllib.error.URLError as e:
+            print("URL Error:",e.reason , serviceUrl)
             return False
 
         return True
